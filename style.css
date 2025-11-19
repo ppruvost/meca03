@@ -1,0 +1,36 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.controls label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+#wheelCanvas {
+  border: 1px solid #aaa;
+  margin-bottom: 25px;
+}
+
+.table-container {
+  margin: 10px 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 400px;
+}
+
+th, td {
+  border: 1px solid #777;
+  padding: 6px 12px;
+  text-align: center;
+}
