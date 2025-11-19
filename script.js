@@ -81,10 +81,19 @@ let chart = new Chart(document.getElementById("chartCanvas"), {
     }]
   },
   options: {
-    scales: {
-      x: { title: { display: true, text: "Diamètre (mm)" } },
-      y: { title: { display: true, text: "Vc (m/min)" } }
+  scales: {
+    x: {
+      title: { display: true, text: "Diamètre (mm)" },
+      min: 0,
+      max: 200
+    },
+    y: {
+      title: { display: true, text: "Vc (m/min)" },
+      min: 0,
+      max: 400
     }
+  }
+}
   }
 });
 
