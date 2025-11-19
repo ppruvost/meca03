@@ -6,6 +6,7 @@ body {
 .controls {
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
@@ -20,13 +21,9 @@ body {
   margin-bottom: 25px;
 }
 
-.table-container {
-  margin: 10px 0;
-}
-
 table {
   border-collapse: collapse;
-  width: 400px;
+  width: 500px;
 }
 
 th, td {
