@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulation Roue - Vitesse / Diamètre / Fréquence</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Simulation de rotation d'une roue</h1>
+
+  <div class="controls">
+    <label>Diamètre (cm) :
+      <input type="number" id="diametre" value="20">
+    </label>
+
+    <label>Vitesse linéaire (cm/s) :
+      <input type="number" id="vitesse" value="50">
+    </label>
+
+    <button id="update">Mettre à jour</button>
+  </div>
+
+  <canvas id="wheelCanvas" width="300" height="300"></canvas>
+
+  <h2>Données</h2>
+
+  <div class="table-container">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Diamètre (cm)</th>
+          <th>Vitesse (cm/s)</th>
+          <th>Fréquence (Hz)</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <button id="addRow">Ajouter aux données</button>
+
+  <h2>Graphique : fréquence en fonction du diamètre</h2>
+  <canvas id="chartCanvas" width="500" height="300"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
