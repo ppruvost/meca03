@@ -2,19 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Simulation Roue - Vitesse / Diamètre / Fréquence</title>
+  <title>Simulation Outil – RPM / Vitesse de coupe / Diamètre</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Simulation de rotation d'une roue</h1>
+  <h1>Simulation d'un outil en rotation</h1>
 
   <div class="controls">
-    <label>Diamètre (cm) :
+    <label>Diamètre outil (mm) :
       <input type="number" id="diametre" value="20">
     </label>
 
-    <label>Vitesse linéaire (cm/s) :
-      <input type="number" id="vitesse" value="50">
+    <label>Vitesse de rotation (tr/min) :
+      <input type="number" id="rpm" value="1000">
+    </label>
+
+    <label>Vitesse de coupe (m/min) (auto) :
+      <input type="text" id="vc" readonly>
     </label>
 
     <button id="update">Mettre à jour</button>
@@ -24,22 +28,20 @@
 
   <h2>Données</h2>
 
-  <div class="table-container">
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Diamètre (cm)</th>
-          <th>Vitesse (cm/s)</th>
-          <th>Fréquence (Hz)</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Diamètre (mm)</th>
+        <th>RPM</th>
+        <th>Vitesse de coupe (m/min)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <button id="addRow">Ajouter aux données</button>
 
-  <h2>Graphique : fréquence en fonction du diamètre</h2>
+  <h2>Graphique : Vitesse de coupe en fonction du diamètre</h2>
   <canvas id="chartCanvas" width="500" height="300"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
