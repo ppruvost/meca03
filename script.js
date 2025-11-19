@@ -5,18 +5,18 @@ const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 
 let angle = 0;
-let rotationSpeed = 0; // en rad/s visuel pour l’animation
+let rotationSpeed = 0; // vitesse de rotation visuelle
 
 // =============================
 // Calcul vitesse de coupe
-// Vc (m/min) = π * D(mm) * N / 1000
+// Vc (m/min) = π * D(mm) * N(rpm) / 1000
 // =============================
 function calcVc(D, N) {
   return Math.PI * D * N / 1000;
 }
 
 // =============================
-// Animation de la roue
+// Dessin + animation de la roue
 // =============================
 function drawWheel() {
   const radius = canvas.width / 4;
@@ -27,10 +27,12 @@ function drawWheel() {
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.rotate(angle);
 
+  // Roue / outil
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.stroke();
 
+  // Trait = repère visuel
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.lineTo(radius, 0);
@@ -46,23 +48,26 @@ function drawWheel() {
 drawWheel();
 
 // =============================
-// Mise à jour
+// Mise à jour des valeurs
 // =============================
 document.getElementById("update").addEventListener("click", () => {
   const D = parseFloat(document.getElementById("diametre").value);
   const N = parseFloat(document.getElementById("rpm").value);
 
+  if (isNaN(D) || isNaN(N)) return;
+
   const Vc = calcVc(D, N);
   document.getElementById("vc").value = Vc.toFixed(2);
 
-  // Animation : 1 tour = 2π rad  
-  // RPM = tr/min → tr/s = RPM/60  
+  // RPM → tr/min → tr/s
   const turnsPerSecond = N / 60;
-  rotationSpeed = turnsPerSecond * 2 * Math.PI * 0.02; // coefficient visuel
+
+  // Animation visuelle
+  rotationSpeed = turnsPerSecond * 2 * Math.PI * 0.02;
 });
 
 // =============================
-// Ajout au tableau + Graphique
+// Tableau + Graphique
 // =============================
 const tableBody = document.querySelector("#dataTable tbody");
 
@@ -86,9 +91,12 @@ let chart = new Chart(document.getElementById("chartCanvas"), {
 document.getElementById("addRow").addEventListener("click", () => {
   const D = parseFloat(document.getElementById("diametre").value);
   const N = parseFloat(document.getElementById("rpm").value);
+
+  if (isNaN(D) || isNaN(N)) return;
+
   const Vc = calcVc(D, N);
 
-  // Ligne tableau
+  // Ajout tableau
   const row = document.createElement("tr");
   row.innerHTML = `
     <td>${D}</td>
@@ -97,7 +105,7 @@ document.getElementById("addRow").addEventListener("click", () => {
   `;
   tableBody.appendChild(row);
 
-  // Ajout au graphique
+  // Ajout graphique
   chart.data.datasets[0].data.push({ x: D, y: Vc });
   chart.update();
 });
