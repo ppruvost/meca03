@@ -5,14 +5,14 @@ const canvas = document.getElementById("wheelCanvas");
 const ctx = canvas.getContext("2d");
 
 let angle = 0;
-let rotationSpeed = 0;
+let rotationSpeed = 0; // en rad/s visuel pour l’animation
 
 // =============================
-// Calcule la fréquence (Hz)
-// f = v / (π * d)
+// Calcul vitesse de coupe
+// Vc (m/min) = π * D(mm) * N / 1000
 // =============================
-function calcFreq(d, v) {
-  return v / (Math.PI * d);
+function calcVc(D, N) {
+  return Math.PI * D * N / 1000;
 }
 
 // =============================
@@ -27,12 +27,10 @@ function drawWheel() {
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.rotate(angle);
 
-  // Cercle
   ctx.beginPath();
   ctx.arc(0, 0, radius, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Un trait pour visualiser la rotation
   ctx.beginPath();
   ctx.moveTo(0, 0);
   ctx.lineTo(radius, 0);
@@ -48,16 +46,19 @@ function drawWheel() {
 drawWheel();
 
 // =============================
-// Mise à jour des paramètres
+// Mise à jour
 // =============================
 document.getElementById("update").addEventListener("click", () => {
-  const d = parseFloat(document.getElementById("diametre").value);
-  const v = parseFloat(document.getElementById("vitesse").value);
-  const freq = calcFreq(d, v);
+  const D = parseFloat(document.getElementById("diametre").value);
+  const N = parseFloat(document.getElementById("rpm").value);
 
-  rotationSpeed = freq * 0.1; // vitesse visuelle
+  const Vc = calcVc(D, N);
+  document.getElementById("vc").value = Vc.toFixed(2);
 
-  console.log("Fréquence =", freq.toFixed(2), "Hz");
+  // Animation : 1 tour = 2π rad  
+  // RPM = tr/min → tr/s = RPM/60  
+  const turnsPerSecond = N / 60;
+  rotationSpeed = turnsPerSecond * 2 * Math.PI * 0.02; // coefficient visuel
 });
 
 // =============================
@@ -69,34 +70,34 @@ let chart = new Chart(document.getElementById("chartCanvas"), {
   type: "scatter",
   data: {
     datasets: [{
-      label: "Fréquence en fonction du diamètre",
+      label: "Vc en fonction du diamètre",
       data: [],
       pointRadius: 5
     }]
   },
   options: {
     scales: {
-      x: { title: { display: true, text: "Diamètre (cm)" } },
-      y: { title: { display: true, text: "Fréquence (Hz)" } }
+      x: { title: { display: true, text: "Diamètre (mm)" } },
+      y: { title: { display: true, text: "Vc (m/min)" } }
     }
   }
 });
 
 document.getElementById("addRow").addEventListener("click", () => {
-  const d = parseFloat(document.getElementById("diametre").value);
-  const v = parseFloat(document.getElementById("vitesse").value);
-  const freq = calcFreq(d, v);
+  const D = parseFloat(document.getElementById("diametre").value);
+  const N = parseFloat(document.getElementById("rpm").value);
+  const Vc = calcVc(D, N);
 
-  // Ajout tableau
+  // Ligne tableau
   const row = document.createElement("tr");
   row.innerHTML = `
-    <td>${d}</td>
-    <td>${v}</td>
-    <td>${freq.toFixed(3)}</td>
+    <td>${D}</td>
+    <td>${N}</td>
+    <td>${Vc.toFixed(2)}</td>
   `;
   tableBody.appendChild(row);
 
-  // Ajout graphique
-  chart.data.datasets[0].data.push({ x: d, y: freq });
+  // Ajout au graphique
+  chart.data.datasets[0].data.push({ x: D, y: Vc });
   chart.update();
 });
