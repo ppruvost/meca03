@@ -59,10 +59,10 @@ document.getElementById("update").addEventListener("click", () => {
   const Vc = calcVc(D, N);
   document.getElementById("vc").value = Vc.toFixed(2);
 
-  // RPM → tr/min → tr/s
+  // RPM → tr/s
   const turnsPerSecond = N / 60;
 
-  // Animation visuelle
+  // Animation visuelle (facteur d’échelle ajustable)
   rotationSpeed = turnsPerSecond * 2 * Math.PI * 0.02;
 });
 
@@ -81,22 +81,24 @@ let chart = new Chart(document.getElementById("chartCanvas"), {
     }]
   },
   options: {
-  scales: {
-    x: {
-      title: { display: true, text: "Diamètre (mm)" },
-      min: 0,
-      max: 200
-    },
-    y: {
-      title: { display: true, text: "Vc (m/min)" },
-      min: 0,
-      max: 400
+    scales: {
+      x: {
+        title: { display: true, text: "Diamètre (mm)" },
+        min: 0,
+        max: 200
+      },
+      y: {
+        title: { display: true, text: "Vc (m/min)" },
+        min: 0,
+        max: 400
+      }
     }
-  }
-}
   }
 });
 
+// =============================
+// Ajout ligne au tableau + graphique
+// =============================
 document.getElementById("addRow").addEventListener("click", () => {
   const D = parseFloat(document.getElementById("diametre").value);
   const N = parseFloat(document.getElementById("rpm").value);
@@ -107,14 +109,4 @@ document.getElementById("addRow").addEventListener("click", () => {
 
   // Ajout tableau
   const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${D}</td>
-    <td>${N}</td>
-    <td>${Vc.toFixed(2)}</td>
-  `;
-  tableBody.appendChild(row);
-
-  // Ajout graphique
-  chart.data.datasets[0].data.push({ x: D, y: Vc });
-  chart.update();
-});
+  row.
