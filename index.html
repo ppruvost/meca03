@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abaque Vc / D / N</title>
+    <title>Simulation + Abaque Usinage</title>
 
     <style>
         body {
@@ -11,14 +11,14 @@
             margin: 0;
             padding: 20px;
             font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            margin-top: 40px;
             text-align: center;
         }
 
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        #canvasContainer {
+        .canvas-container {
             display: flex;
             justify-content: center;
             margin-top: 20px;
@@ -32,14 +32,29 @@
 </head>
 <body>
 
-    <h1>Abaque Vc / Diamètre / N</h1>
+    <!-- ========================= -->
+    <!-- 🎡 1. Simulation principale -->
+    <!-- ========================= -->
 
-    <div id="canvasContainer">
-        <!-- Canvas avec dimensions obligatoires -->
+    <h2>Simulation Vitesse de Coupe / RPM</h2>
+
+    <div class="canvas-container">
+        <canvas id="simulationCanvas" width="600" height="400"></canvas>
+    </div>
+
+    <!-- ========================= -->
+    <!-- 📈 2. Abaque Vc / Diamètre / N -->
+    <!-- ========================= -->
+
+    <h2>Abaque Vc / Diamètre / N</h2>
+
+    <div class="canvas-container">
         <canvas id="abaqueCanvas" width="900" height="600"></canvas>
     </div>
 
-    <!-- IMPORTANT : le script doit être chargé APRÈS le canvas -->
-    <script src="script.js"></script>
+    <!-- Chargement des scripts -->
+    <script src="simulation.js"></script>
+    <script src="abaque.js"></script>
+
 </body>
 </html>
