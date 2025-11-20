@@ -1,139 +1,42 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Simulation – Conditions de coupe / RPM / Vc</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abaque Vc / D / N + Jeu Formule</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #fafafa;
-    }
-    h1, h2 {
-      color: #333;
-    }
-    .controls {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      max-width: 600px;
-      margin-bottom: 20px;
-    }
-    label {
-      display: flex;
-      flex-direction: column;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-    input, select {
-      padding: 5px;
-      font-size: 14px;
-    }
-    button {
-      padding: 8px 12px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    table {
-      border-collapse: collapse;
-      margin-top: 15px;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #888;
-      padding: 6px;
-      text-align: center;
-    }
-    th {
-      background: #ddd;
-    }
-    .pedago-box {
-      background: #f4f4f4;
-      border-left: 4px solid #80665b;
-      padding: 12px;
-      margin-top: 20px;
-      border-radius: 6px;
-      max-width: 700px;
-    }
-  </style>
-</head>
-<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
 
-  <h1>Simulateur – Vitesse de coupe, RPM, Avance</h1>
+        h1 {
+            text-align: center;
+        }
 
-  <div class="controls">
-    <label>Outil :
-      <select id="outil"></select>
-    </label>
-    <label>Matière :
-      <select id="matiere"></select>
-    </label>
-    <label>Diamètre outil (mm) :
-      <input type="number" id="diametre" value="20">
-    </label>
-    <label>Nombre de dents (Z) :
-      <input type="number" id="z" value="4">
-    </label>
-    <label>Vc recommandé (m/min) :
-      <input type="text" id="vcReco" readonly>
-    </label>
-    <label>fz recommandée (mm/dent) :
-      <input type="text" id="fzReco" readonly>
-    </label>
-    <label>RPM calculé :
-      <input type="text" id="rpm" readonly>
-    </label>
-    <label>Vf calculée (mm/min) :
-      <input type="text" id="vf" readonly>
-    </label>
-  </div>
+        .carte {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
 
-  <button id="update">Mettre à jour</button>
+        label {
+            font-weight: bold;
+        }
 
-  <h2>Animation de l’outil</h2>
-  <canvas id="wheelCanvas" width="300" height="300"></canvas>
+        input, select, button {
+            margin: 5px 0 10px 0;
+            padding: 6px 10px;
+            font-size: 16px;
+        }
 
-  <h2>Comprendre la relation entre Vc, diamètre et RPM</h2>
-  <div id="pedagogie" class="pedago-box">
-    <p><strong>But :</strong> comprendre comment la vitesse de coupe (Vc), le diamètre (D) et la vitesse de rotation (N) sont liés.</p>
-    <p id="analyseVc"></p>
-    <p id="analyseD"></p>
-    <p id="formuleExplication"></p>
-  </div>
+        button {
+            cursor: pointer;
+        }
 
-  <h2>Données enregistrées</h2>
-  <table id="dataTable">
-    <thead>
-      <tr>
-        <th>Outil</th>
-        <th>Matière</th>
-        <th>D (mm)</th>
-        <th>Z</th>
-        <th>Vc (plage)</th>
-        <th>fz (plage)</th>
-        <th>RPM</th>
-        <th>Vf (mm/min)</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-
-  <button id="addRow">Ajouter aux données</button>
-
-  <h2>Graphique : Vc en fonction du diamètre</h2>
-  <canvas id="chartCanvas" width="600" height="300"></canvas>
-
-  <h2>Graphique : N (RPM) en fonction du diamètre (D)</h2>
-  <canvas id="chartND" width="600" height="300"></canvas>
-
-  <h2>Graphique : N (RPM) en fonction de la vitesse de coupe (Vc)</h2>
-  <canvas id="chartNVc" width="600" height="300"></canvas>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="script.js"></script>
-
-</body>
-</html>
+        #abaqueCanvas {
+            border: 1px solid #888;
