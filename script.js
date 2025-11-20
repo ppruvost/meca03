@@ -1,16 +1,10 @@
 // ============================================================
-// script.js — Version complète et finalisée
-// Intègre :
-// ✔ Paramètres exacts des PDF
-// ✔ Calculs (Vc, fz, N, Vf)
-// ✔ Animation
-// ✔ Tableau + graphique
-// ✔ Zone pédagogique (formule N = (Vc × 1000)/(π × D))
+// script.js — Version complète et finalisée + 3 graphiques
 // ============================================================
 
 
 // ============================================================
-// PARAMÈTRES (retranscription fidèle du PDF)
+// PARAMÈTRES (PDF complet retranscrit)
 // ============================================================
 const parametres = {
   "FORET HSS": {
@@ -126,7 +120,7 @@ const parametres = {
 
 
 // ============================================================
-// OUTILS — fonctions utiles
+// OUTILS — FONCTIONS
 // ============================================================
 function moyenne(arr) {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
@@ -136,21 +130,17 @@ function formatRange(arr) {
   return arr.length === 1 ? `${arr[0]}` : `${arr[0]} - ${arr[1]}`;
 }
 
-// Formule officielle : N = (Vc × 1000) / (π × D)
 function calcRPM(Vc, D) {
-  if (!Vc || !D) return NaN;
   return (Vc * 1000) / (Math.PI * D);
 }
 
-// Formule officielle : Vf = N × fz × Z
 function calcVf(N, fz, Z) {
-  if (!N || !fz || !Z) return NaN;
   return N * fz * Z;
 }
 
 
 // ============================================================
-// SELECTION DOM
+// DOM ELEMENTS
 // ============================================================
 const outilSelect = document.getElementById("outil");
 const matiereSelect = document.getElementById("matiere");
@@ -167,7 +157,7 @@ const formuleExplication = document.getElementById("formuleExplication");
 
 
 // ============================================================
-// REMPLISSAGE OUTIL + MATIERE
+// LISTES OUTILS + MATIÈRES
 // ============================================================
 function remplirOutils() {
   Object.keys(parametres).forEach(o => {
@@ -179,9 +169,8 @@ function remplirOutils() {
 }
 
 function remplirMatieres() {
-  const outil = outilSelect.value;
   matiereSelect.innerHTML = "";
-  Object.keys(parametres[outil]).forEach(m => {
+  Object.keys(parametres[outilSelect.value]).forEach(m => {
     const opt = document.createElement("option");
     opt.value = m;
     opt.textContent = m;
@@ -211,22 +200,18 @@ let angle = 0;
 let rotationSpeed = 0;
 
 function drawWheel() {
-  const W = wheelCanvas.width;
-  const H = wheelCanvas.height;
-  const R = 80;
-
-  ctxWheel.clearRect(0, 0, W, H);
+  ctxWheel.clearRect(0, 0, 300, 300);
   ctxWheel.save();
-  ctxWheel.translate(W / 2, H / 2);
+  ctxWheel.translate(150, 150);
   ctxWheel.rotate(angle);
 
   ctxWheel.beginPath();
-  ctxWheel.arc(0, 0, R, 0, Math.PI * 2);
+  ctxWheel.arc(0, 0, 80, 0, Math.PI * 2);
   ctxWheel.stroke();
 
   ctxWheel.beginPath();
   ctxWheel.moveTo(0, 0);
-  ctxWheel.lineTo(R, 0);
+  ctxWheel.lineTo(80, 0);
   ctxWheel.strokeStyle = "red";
   ctxWheel.stroke();
 
@@ -242,18 +227,16 @@ drawWheel();
 // ZONE PEDAGOGIQUE
 // ============================================================
 function miseAJourPedagogie(VcRange, D, N) {
-  if (!VcRange || !D || !N) return;
-
   analyseVc.textContent =
-    "➤ Quand la vitesse de coupe (Vc) augmente, la vitesse de rotation (N) augmente aussi.";
-
+    "➤ Quand Vc augmente, N augmente.";
+  
   analyseD.textContent =
-    "➤ Quand le diamètre (D) augmente, la vitesse de rotation (N) doit diminuer pour conserver la même Vc.";
+    "➤ Quand le diamètre augmente, la vitesse de rotation diminue pour conserver la même Vc.";
 
   formuleExplication.innerHTML = `
     <strong>Formule fondamentale :</strong><br>
     <code>N = (Vc × 1000) / (π × D)</code><br><br>
-    Dans votre cas :<br>
+    Avec vos valeurs :<br>
     <code>N = (${formatRange(VcRange)} × 1000) / (π × ${D})</code><br>
     ≈ <strong>${Math.round(N)} tr/min</strong>
   `;
@@ -261,7 +244,7 @@ function miseAJourPedagogie(VcRange, D, N) {
 
 
 // ============================================================
-// RAFRAÎCHISSEMENT PRINCIPAL
+// RAFRAICHISSEMENT PRINCIPAL
 // ============================================================
 function rafraichir() {
   const outil = outilSelect.value;
@@ -271,25 +254,21 @@ function rafraichir() {
 
   const data = parametres[outil][mat];
   const VcRange = data.Vc;
-  const fzRange = data.fz || null;
+  const fzRange = data.fz;
 
-  // Affichage plages
   vcRecoInput.value = formatRange(VcRange);
   fzRecoInput.value = fzRange ? formatRange(fzRange) : "—";
 
-  // Valeurs moyennes pour calcul
   const Vc = moyenne(VcRange);
   const fz = fzRange ? moyenne(fzRange) : NaN;
 
-  // Calculs
   const N = calcRPM(Vc, D);
-  rpmInput.value = isNaN(N) ? "" : Math.round(N);
+  rpmInput.value = Math.round(N);
 
   const Vf = calcVf(N, fz, Z);
   vfInput.value = isNaN(Vf) ? "" : Vf.toFixed(1);
 
-  // Animation (N → rotation)
-  rotationSpeed = isNaN(N) ? 0 : (N / 60) * 0.02;
+  rotationSpeed = (N / 60) * 0.02;
 
   miseAJourPedagogie(VcRange, D, N);
 }
@@ -298,19 +277,13 @@ rafraichir();
 
 
 // ============================================================
-// TABLEAU + GRAPHIQUE
+// GRAPHIQUES
 // ============================================================
-const tableBody = document.querySelector("#dataTable tbody");
 
+// 1) Vc = f(D)
 const chart = new Chart(document.getElementById("chartCanvas"), {
   type: "scatter",
-  data: {
-    datasets: [{
-      label: "Vc (m/min) en fonction du diamètre",
-      data: [],
-      pointRadius: 5
-    }]
-  },
+  data: { datasets: [{ label: "Vc (m/min) en fonction du diamètre", data: [], pointRadius: 5 }] },
   options: {
     scales: {
       x: { title: { display: true, text: "Diamètre (mm)" } },
@@ -319,6 +292,34 @@ const chart = new Chart(document.getElementById("chartCanvas"), {
   }
 });
 
+// 2) N = f(D)
+const chartND = new Chart(document.getElementById("chartND"), {
+  type: "scatter",
+  data: { datasets: [{ label: "N en fonction de D", data: [], pointRadius: 4 }] },
+  options: {
+    scales: {
+      x: { title: { display: true, text: "Diamètre D (mm)" } },
+      y: { title: { display: true, text: "N (tr/min)" } }
+    }
+  }
+});
+
+// 3) N = f(Vc)
+const chartNVc = new Chart(document.getElementById("chartNVc"), {
+  type: "scatter",
+  data: { datasets: [{ label: "N en fonction de Vc", data: [], pointRadius: 4 }] },
+  options: {
+    scales: {
+      x: { title: { display: true, text: "Vc (m/min)" } },
+      y: { title: { display: true, text: "N (tr/min)" } }
+    }
+  }
+});
+
+
+// ============================================================
+// AJOUT LIGNE + GRAPHIQUES
+// ============================================================
 document.getElementById("addRow").addEventListener("click", () => {
   const outil = outilSelect.value;
   const mat = matiereSelect.value;
@@ -327,10 +328,11 @@ document.getElementById("addRow").addEventListener("click", () => {
 
   const data = parametres[outil][mat];
   const VcRange = data.Vc;
-  const fzRange = data.fz || [];
+  const fzRange = data.fz;
 
   const Vc = moyenne(VcRange);
-  const fz = fzRange.length ? moyenne(fzRange) : NaN;
+  const fz = fzRange ? moyenne(fzRange) : NaN;
+
   const N = calcRPM(Vc, D);
   const Vf = calcVf(N, fz, Z);
 
@@ -341,14 +343,23 @@ document.getElementById("addRow").addEventListener("click", () => {
     <td>${D}</td>
     <td>${Z}</td>
     <td>${formatRange(VcRange)}</td>
-    <td>${fzRange.length ? formatRange(fzRange) : "—"}</td>
+    <td>${fzRange ? formatRange(fzRange) : "—"}</td>
     <td>${Math.round(N)}</td>
     <td>${isNaN(Vf) ? "—" : Vf.toFixed(1)}</td>
   `;
-  tableBody.appendChild(row);
+  document.querySelector("#dataTable tbody").appendChild(row);
 
+  // GRAPHIQUE 1 : Vc = f(D)
   chart.data.datasets[0].data.push({ x: D, y: Vc });
   chart.update();
+
+  // GRAPHIQUE 2 : N = f(D)
+  chartND.data.datasets[0].data.push({ x: D, y: N });
+  chartND.update();
+
+  // GRAPHIQUE 3 : N = f(Vc)
+  chartNVc.data.datasets[0].data.push({ x: Vc, y: N });
+  chartNVc.update();
 });
 
 
