@@ -2,13 +2,73 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Simulation Outil – RPM / Vc / fz</title>
+  <title>Simulation – Conditions de coupe / RPM / Vc</title>
   <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #fafafa;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    input, select {
+      padding: 5px;
+      font-size: 14px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-top: 15px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #888;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background: #ddd;
+    }
+
+    .pedago-box {
+      background: #f4f4f4;
+      border-left: 4px solid #80665b;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 6px;
+      max-width: 700px;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Simulation d'usinage</h1>
+  <h1>Simulateur – Vitesse de coupe, RPM, Avance</h1>
 
+  <!-- =========================== -->
+  <!-- CONTROLES -->
+  <!-- =========================== -->
   <div class="controls">
 
     <label>Outil :
@@ -31,7 +91,7 @@
       <input type="text" id="vcReco" readonly>
     </label>
 
-    <label>fz recommandé (mm/dent) :
+    <label>fz recommandée (mm/dent) :
       <input type="text" id="fzReco" readonly>
     </label>
 
@@ -43,13 +103,30 @@
       <input type="text" id="vf" readonly>
     </label>
 
-    <button id="update">Mettre à jour</button>
   </div>
 
-  <h2>Animation outil</h2>
+  <button id="update">Mettre à jour</button>
+
+  <h2>Animation de l’outil</h2>
   <canvas id="wheelCanvas" width="300" height="300"></canvas>
 
-  <h2>Données</h2>
+  <!-- =========================== -->
+  <!-- ZONE PEDAGOGIQUE -->
+  <!-- =========================== -->
+  <h2>Comprendre la relation entre Vc, diamètre et RPM</h2>
+  <div id="pedagogie" class="pedago-box">
+    <p><strong>But :</strong> comprendre comment la vitesse de coupe (Vc), le diamètre (D) et la vitesse de rotation (N) sont liés.</p>
+
+    <p id="analyseVc"></p>
+    <p id="analyseD"></p>
+    <p id="formuleExplication"></p>
+  </div>
+
+  <!-- =========================== -->
+  <!-- TABLEAU -->
+  <!-- =========================== -->
+
+  <h2>Données enregistrées</h2>
   <table id="dataTable">
     <thead>
       <tr>
@@ -57,10 +134,10 @@
         <th>Matière</th>
         <th>D (mm)</th>
         <th>Z</th>
-        <th>Vc</th>
-        <th>fz</th>
+        <th>Vc (plage)</th>
+        <th>fz (plage)</th>
         <th>RPM</th>
-        <th>Vf</th>
+        <th>Vf (mm/min)</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -68,9 +145,14 @@
 
   <button id="addRow">Ajouter aux données</button>
 
-  <h2>Graphique : Vc en fonction du diamètre</h2>
-  <canvas id="chartCanvas" width="500" height="300"></canvas>
+  <!-- =========================== -->
+  <!-- GRAPHIQUE -->
+  <!-- =========================== -->
 
+  <h2>Graphique : Vc en fonction du diamètre</h2>
+  <canvas id="chartCanvas" width="600" height="300"></canvas>
+
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 
