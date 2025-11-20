@@ -33,26 +33,46 @@
 <body>
 
     <!-- ========================= -->
-    <!-- 🎡 1. Simulation principale -->
+    <!-- 🎡 SIMULATION PRINCIPALE -->
     <!-- ========================= -->
-
-    <h2>Simulation Vitesse de Coupe / RPM</h2>
-
+    <h2>Simulation – Vitesse de Coupe / RPM</h2>
     <div class="canvas-container">
         <canvas id="simulationCanvas" width="600" height="400"></canvas>
     </div>
 
     <!-- ========================= -->
-    <!-- 📈 2. Abaque Vc / Diamètre / N -->
+    <!-- 📊 GRAPHIQUES CHART.JS -->
     <!-- ========================= -->
 
-    <h2>Abaque Vc / Diamètre / N</h2>
+    <h2>Graphique – Vitesse de coupe</h2>
+    <div class="canvas-container">
+        <canvas id="chartCanvas" width="600" height="350"></canvas>
+    </div>
+
+    <h2>Graphique – RPM en fonction du diamètre</h2>
+    <div class="canvas-container">
+        <canvas id="chartND" width="600" height="350"></canvas>
+    </div>
+
+    <h2>Graphique – Variation Vc → RPM</h2>
+    <div class="canvas-container">
+        <canvas id="chartNVc" width="600" height="350"></canvas>
+    </div>
+
+    <!-- ========================= -->
+    <!-- 🟦 ABAQUE CALCULÉ (OPTION D) -->
+    <!-- ========================= -->
+    <h2>Abaque Vc / Diamètre / RPM – Auto-généré</h2>
 
     <div class="canvas-container">
         <canvas id="abaqueCanvas" width="900" height="600"></canvas>
     </div>
 
-    <!-- Chargement des scripts -->
+    <!-- ================== -->
+    <!-- Scripts JS du projet -->
+    <!-- ================== -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="simulation.js"></script>
     <script src="abaque.js"></script>
 
