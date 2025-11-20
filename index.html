@@ -37,7 +37,6 @@
       cursor: pointer;
       margin-top: 10px;
     }
-
     table {
       border-collapse: collapse;
       margin-top: 15px;
@@ -51,7 +50,6 @@
     th {
       background: #ddd;
     }
-
     .pedago-box {
       background: #f4f4f4;
       border-left: 4px solid #80665b;
@@ -66,43 +64,31 @@
 
   <h1>Simulateur – Vitesse de coupe, RPM, Avance</h1>
 
-  <!-- =========================== -->
-  <!-- CONTROLES -->
-  <!-- =========================== -->
   <div class="controls">
-
     <label>Outil :
       <select id="outil"></select>
     </label>
-
     <label>Matière :
       <select id="matiere"></select>
     </label>
-
     <label>Diamètre outil (mm) :
       <input type="number" id="diametre" value="20">
     </label>
-
     <label>Nombre de dents (Z) :
       <input type="number" id="z" value="4">
     </label>
-
     <label>Vc recommandé (m/min) :
       <input type="text" id="vcReco" readonly>
     </label>
-
     <label>fz recommandée (mm/dent) :
       <input type="text" id="fzReco" readonly>
     </label>
-
     <label>RPM calculé :
       <input type="text" id="rpm" readonly>
     </label>
-
     <label>Vf calculée (mm/min) :
       <input type="text" id="vf" readonly>
     </label>
-
   </div>
 
   <button id="update">Mettre à jour</button>
@@ -110,21 +96,13 @@
   <h2>Animation de l’outil</h2>
   <canvas id="wheelCanvas" width="300" height="300"></canvas>
 
-  <!-- =========================== -->
-  <!-- ZONE PEDAGOGIQUE -->
-  <!-- =========================== -->
   <h2>Comprendre la relation entre Vc, diamètre et RPM</h2>
   <div id="pedagogie" class="pedago-box">
     <p><strong>But :</strong> comprendre comment la vitesse de coupe (Vc), le diamètre (D) et la vitesse de rotation (N) sont liés.</p>
-
     <p id="analyseVc"></p>
     <p id="analyseD"></p>
     <p id="formuleExplication"></p>
   </div>
-
-  <!-- =========================== -->
-  <!-- TABLEAU -->
-  <!-- =========================== -->
 
   <h2>Données enregistrées</h2>
   <table id="dataTable">
@@ -145,14 +123,15 @@
 
   <button id="addRow">Ajouter aux données</button>
 
-  <!-- =========================== -->
-  <!-- GRAPHIQUE -->
-  <!-- =========================== -->
-
   <h2>Graphique : Vc en fonction du diamètre</h2>
   <canvas id="chartCanvas" width="600" height="300"></canvas>
 
-  <!-- Scripts -->
+  <h2>Graphique : N (RPM) en fonction du diamètre (D)</h2>
+  <canvas id="chartND" width="600" height="300"></canvas>
+
+  <h2>Graphique : N (RPM) en fonction de la vitesse de coupe (Vc)</h2>
+  <canvas id="chartNVc" width="600" height="300"></canvas>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 
