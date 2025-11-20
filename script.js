@@ -1,73 +1,127 @@
 // =============================
-// Variables globales
+// TABLEAU PARAMÈTRES (extrait du PDF fourni)
 // =============================
-const canvas = document.getElementById("wheelCanvas");
-const ctx = canvas.getContext("2d");
+const parametres = {
+  "FORET HSS": {
+    "ALUMINIUM":  { Vc: [70],     fz: [0.1, 0.25] },
+    "ACIER DOUX": { Vc: [25],     fz: [0.1] },
+    "ACIER MI-DUR": { Vc: [25,35], fz: [0.08,0.12] },
+    "LAITON": { Vc: [22], fz: [0.1] },
+    "ACIER PRETRAITE": { Vc: [20], fz: [0.08] },
+    "INOX": { Vc: [16], fz: [0.07] },
+    "TITANE": { Vc: [12], fz: [0.03,0.06] },
+    "INCONEL": { Vc: [10], fz: [0.03,0.06] }
+  },
 
-let angle = 0;
-let rotationSpeed = 0; // vitesse de rotation visuelle
+  "FRAISE CARBURE": {
+    "ALUMINIUM": { Vc: [150,250], fz: [0.15,0.3] },
+    "ACIER DOUX": { Vc: [60,120], fz: [0.1] },
+    "ACIER MI-DUR": { Vc: [60,80], fz: [0.1,0.2] },
+    "LAITON": { Vc: [50], fz: [0.08,0.1] },
+    "ACIER PRETRAITE": { Vc: [35,40], fz: [0.1,0.15] },
+    "INOX": { Vc: [30], fz: [0.08,0.12] },
+    "TITANE": { Vc: [25], fz: [0.025,0.05] },
+    "INCONEL": { Vc: [22], fz: [0.02,0.04] }
+  }
+};
+
+// Remplissage menus déroulants
+const outilSelect = document.getElementById("outil");
+const matiereSelect = document.getElementById("matiere");
+
+Object.keys(parametres).forEach(outil => {
+  const opt = document.createElement("option");
+  opt.value = outil;
+  opt.textContent = outil;
+  outilSelect.appendChild(opt);
+});
+
+function fillMatieres() {
+  matiereSelect.innerHTML = "";
+  const outil = outilSelect.value;
+  Object.keys(parametres[outil]).forEach(mat => {
+    const opt = document.createElement("option");
+    opt.value = mat;
+    opt.textContent = mat;
+    matiereSelect.appendChild(opt);
+  });
+}
+outilSelect.addEventListener("change", fillMatieres);
+fillMatieres();
 
 // =============================
-// Calcul vitesse de coupe
-// Vc (m/min) = π * D(mm) * N(rpm) / 1000
+// CALCULS
 // =============================
-function calcVc(D, N) {
-  return Math.PI * D * N / 1000;
+function calcRPM(Vc, D) {
+  return (Vc * 1000) / (Math.PI * D);
+}
+
+function calcVf(N, fz, Z) {
+  return N * fz * Z;
 }
 
 // =============================
-// Dessin + animation de la roue
+// Animation roue
 // =============================
+const canvas = document.getElementById("wheelCanvas");
+const ctx = canvas.getContext("2d");
+let angle = 0;
+let rotationSpeed = 0;
+
 function drawWheel() {
-  const radius = canvas.width / 4;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0,0,300,300);
   ctx.save();
-
-  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.translate(150,150);
   ctx.rotate(angle);
 
-  // Roue / outil
   ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.arc(0,0,80,0,Math.PI*2);
   ctx.stroke();
 
-  // Trait = repère visuel
   ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(radius, 0);
+  ctx.moveTo(0,0);
+  ctx.lineTo(80,0);
   ctx.strokeStyle = "red";
   ctx.stroke();
 
   ctx.restore();
-
   angle += rotationSpeed;
   requestAnimationFrame(drawWheel);
 }
-
 drawWheel();
 
 // =============================
-// Mise à jour des valeurs
+// Mise à jour valeurs
 // =============================
 document.getElementById("update").addEventListener("click", () => {
+
+  const outil = outilSelect.value;
+  const mat = matiereSelect.value;
   const D = parseFloat(document.getElementById("diametre").value);
-  const N = parseFloat(document.getElementById("rpm").value);
+  const Z = parseFloat(document.getElementById("z").value);
 
-  if (isNaN(D) || isNaN(N)) return;
+  const VcRange = parametres[outil][mat].Vc;
+  const fzRange = parametres[outil][mat].fz;
 
-  const Vc = calcVc(D, N);
-  document.getElementById("vc").value = Vc.toFixed(2);
+  const Vc = (VcRange.length === 1) ? VcRange[0] : (VcRange[0] + VcRange[1]) / 2;
+  const fz = (fzRange.length === 1) ? fzRange[0] : (fzRange[0] + fzRange[1]) / 2;
 
-  // RPM → tr/s
-  const turnsPerSecond = N / 60;
+  document.getElementById("vcReco").value =
+    VcRange.length === 1 ? Vc : `${VcRange[0]} - ${VcRange[1]}`;
+  document.getElementById("fzReco").value =
+    fzRange.length === 1 ? fz : `${fzRange[0]} - ${fzRange[1]}`;
 
-  // Animation visuelle (facteur d’échelle ajustable)
-  rotationSpeed = turnsPerSecond * 2 * Math.PI * 0.02;
+  const N = calcRPM(Vc, D);
+  const Vf = calcVf(N, fz, Z);
+
+  document.getElementById("rpm").value = N.toFixed(0);
+  document.getElementById("vf").value = Vf.toFixed(1);
+
+  rotationSpeed = (N/60) * 0.03;
 });
 
 // =============================
-// Tableau + Graphique
+// Tableau + graphique
 // =============================
 const tableBody = document.querySelector("#dataTable tbody");
 
@@ -75,38 +129,38 @@ let chart = new Chart(document.getElementById("chartCanvas"), {
   type: "scatter",
   data: {
     datasets: [{
-      label: "Vc en fonction du diamètre",
+      label: "Vc vs diamètre",
       data: [],
       pointRadius: 5
     }]
-  },
-  options: {
-    scales: {
-      x: {
-        title: { display: true, text: "Diamètre (mm)" },
-        min: 0,
-        max: 200
-      },
-      y: {
-        title: { display: true, text: "Vc (m/min)" },
-        min: 0,
-        max: 400
-      }
-    }
   }
 });
 
-// =============================
-// Ajout ligne au tableau + graphique
-// =============================
+// Ajouter ligne
 document.getElementById("addRow").addEventListener("click", () => {
+  const outil = outilSelect.value;
+  const mat = matiereSelect.value;
   const D = parseFloat(document.getElementById("diametre").value);
+  const Z = parseFloat(document.getElementById("z").value);
+  const Vc = parseFloat(document.getElementById("rpm").value);
+  const fz = parseFloat(document.getElementById("fzReco").value);
+
   const N = parseFloat(document.getElementById("rpm").value);
+  const Vf = parseFloat(document.getElementById("vf").value);
 
-  if (isNaN(D) || isNaN(N)) return;
-
-  const Vc = calcVc(D, N);
-
-  // Ajout tableau
   const row = document.createElement("tr");
-  row.
+  row.innerHTML = `
+    <td>${outil}</td>
+    <td>${mat}</td>
+    <td>${D}</td>
+    <td>${Z}</td>
+    <td>${Vc}</td>
+    <td>${fz}</td>
+    <td>${N.toFixed(0)}</td>
+    <td>${Vf.toFixed(1)}</td>
+  `;
+  tableBody.appendChild(row);
+
+  chart.data.datasets[0].data.push({ x: D, y: Vc });
+  chart.update();
+});
