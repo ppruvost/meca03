@@ -2,38 +2,65 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Simulation Outil – RPM / Vitesse de coupe / Diamètre</title>
+  <title>Simulation Outil – RPM / Vc / fz</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Simulation d'un outil en rotation</h1>
+
+  <h1>Simulation d'usinage</h1>
 
   <div class="controls">
+
+    <label>Outil :
+      <select id="outil"></select>
+    </label>
+
+    <label>Matière :
+      <select id="matiere"></select>
+    </label>
+
     <label>Diamètre outil (mm) :
       <input type="number" id="diametre" value="20">
     </label>
 
-    <label>Vitesse de rotation (tr/min) :
-      <input type="number" id="rpm" value="1000">
+    <label>Nombre de dents (Z) :
+      <input type="number" id="z" value="4">
     </label>
 
-    <label>Vitesse de coupe (m/min) (auto) :
-      <input type="text" id="vc" readonly>
+    <label>Vc recommandé (m/min) :
+      <input type="text" id="vcReco" readonly>
+    </label>
+
+    <label>fz recommandé (mm/dent) :
+      <input type="text" id="fzReco" readonly>
+    </label>
+
+    <label>RPM calculé :
+      <input type="text" id="rpm" readonly>
+    </label>
+
+    <label>Vf calculée (mm/min) :
+      <input type="text" id="vf" readonly>
     </label>
 
     <button id="update">Mettre à jour</button>
   </div>
 
+  <h2>Animation outil</h2>
   <canvas id="wheelCanvas" width="300" height="300"></canvas>
 
   <h2>Données</h2>
-
   <table id="dataTable">
     <thead>
       <tr>
-        <th>Diamètre (mm)</th>
+        <th>Outil</th>
+        <th>Matière</th>
+        <th>D (mm)</th>
+        <th>Z</th>
+        <th>Vc</th>
+        <th>fz</th>
         <th>RPM</th>
-        <th>Vitesse de coupe (m/min)</th>
+        <th>Vf</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -41,10 +68,11 @@
 
   <button id="addRow">Ajouter aux données</button>
 
-  <h2>Graphique : Vitesse de coupe en fonction du diamètre</h2>
+  <h2>Graphique : Vc en fonction du diamètre</h2>
   <canvas id="chartCanvas" width="500" height="300"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
+
 </body>
 </html>
